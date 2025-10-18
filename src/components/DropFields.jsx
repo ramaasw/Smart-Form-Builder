@@ -3,7 +3,13 @@ import { useDrop } from "react-dnd";
 import { DraggableField } from "./DraggableField";
 import { generateReactForm } from "./GenerateReactForm";
 
-export const DropFields = ({ fields, ondrop, onselect,fieldReordering }) => {
+export const DropFields = ({
+  fields,
+  ondrop,
+  onselect,
+  fieldReordering,
+  onDelete,
+}) => {
   const [selectedFieldIndex, setSelectedFieldIndex] = useState(null);
 
   const [, dropRef] = useDrop(() => ({
@@ -23,14 +29,13 @@ export const DropFields = ({ fields, ondrop, onselect,fieldReordering }) => {
 
   const codeExport = () => {
     const generatedCode = generateReactForm(fields);
-     // Download as file
-  const blob = new Blob([generatedCode], { type: "text/javascript" });
-  const link = document.createElement("a");
-  link.href = URL.createObjectURL(blob);
-  link.download = "GeneratedForm.jsx";
-  link.click();
-  
-  }
+    // Download as file
+    const blob = new Blob([generatedCode], { type: "text/javascript" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "GeneratedForm.jsx";
+    link.click();
+  };
 
   return (
     <main
@@ -46,7 +51,7 @@ export const DropFields = ({ fields, ondrop, onselect,fieldReordering }) => {
         <form
           className="w-full"
           onSubmit={(e) => {
-            e.preventDefault;
+            e.preventDefault();
             e.target.reportValidity();
           }}
         >
@@ -64,11 +69,21 @@ export const DropFields = ({ fields, ondrop, onselect,fieldReordering }) => {
             />
           ))}
 
-          <div className="mt-4 flex gap-2 items-center">
-            <button className="px-4 py-2 border rounded" onClick={codeExport}>Export</button>
-            <button className="px-4 py-2 bg-blue-500 text-white rounded shadow">
-              COPY
+          <div className="mt-4 p-2 flex gap-2 items-center">
+            <button
+              className="px-4 py-2  !bg-blue-400 text-white rounded shadow border"
+              onClick={codeExport}
+            >
+              Export
             </button>
+            {selectedFieldIndex && (
+              <button
+                className="px-4 py-2  !bg-blue-400 text-white rounded shadow border"
+                onClick={onDelete}
+              >
+                Delete
+              </button>
+            )}
           </div>
         </form>
       )}

@@ -18,12 +18,13 @@ export default function SmartFormBuilder() {
   const [formData, setFormData] = useState([]);
   // const [errors, setErrors] = useState();
 
+
   useEffect(() => {
     console.log("formData", formData);
   }, [formData]);
 
   const handleDrop = (item) => {
-    if (item.type === "radio" || item.type === "select") {
+        if (item.type === "radio" || item.type === "select") {
       setFields((prevFields) => [
         ...prevFields,
         {
@@ -59,7 +60,7 @@ export default function SmartFormBuilder() {
   };
 
   const fieldReordering = (updatedFields) => {
-    setFields([...updatedFields])
+    setFields([...updatedFields]);
   };
 
   const updateField = (key, val) => {
@@ -159,6 +160,7 @@ export default function SmartFormBuilder() {
             fields={fields}
             formData={formData}
             setFormData={setFormData}
+            onClose={() => setIsPreviewMode(false)}
             // errors={errors}
           />
         ) : (
@@ -168,6 +170,13 @@ export default function SmartFormBuilder() {
             onselect={handleSelect}
             onchange={updateField}
             fieldReordering={fieldReordering}
+            onDelete={() => {
+              if (!selectedFieldId) return;
+              setFields((prevFields) =>
+                prevFields.filter((f) => f.id !== selectedFieldId)
+              );
+              setSelectedFieldId(null);
+            }}
           />
         )}
 
