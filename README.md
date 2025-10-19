@@ -1,15 +1,48 @@
 # Smart-Form-Builder
 Create powerful, production-ready React forms — visually and effortlessly! Our Smart Visual Form Builder lets you drag, drop, and configure form fields with validation, conditional logic, accessibility support, and instant React code export — no manual coding required.
 
-# React + Vite
+# Features
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+🧩 Drag & Drop Interface – Build forms effortlessly using our interactive canvas.
 
-Currently, two official plugins are available:
+🎨 Live Preview Overlay – Instantly preview how your form will look and behave.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+🔒 Validation Rules – Add min/max length, regex patterns, required fields, and more.
 
-## Expanding the ESLint configuration
+⚙️ Conditional Logic – Show or hide fields dynamically based on user input.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+💾 Export to React – Download the generated .jsx file ready to use in your project.
+
+♿ Accessible by Design – ARIA labels and semantic HTML built in.
+
+⚡ Powered by Vite + React + Tailwind – Blazing-fast development and beautiful styling.
+
+# Tech Stack
+⚛️ React - 	Component-based UI
+
+🧰 React DnD	- Drag-and-drop form elements
+
+🎨 Tailwind CSS -	Styling and layout
+
+⚡ Vite -	Fast bundling and HMR
+
+# Preview
+✨ Drag fields ➜ Preview ➜ Export ➜ Done!
+
+# Installation
+Clone the repository:
+```
+git clone https://github.com/ramaasw/Smart-Form-Builder.git
+
+cd Smart-Form-Builder
+```
+
+Install dependencies:
+```
+npm install
+```
+
+Start the development server:
+```
+npm run dev
+```
