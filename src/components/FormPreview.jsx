@@ -1,6 +1,8 @@
+import React, { useState } from "react";
 import { evaluateCondition, validator } from "../helper/helper";
 
 export const FormPreview = ({ fields, formData, setFormData, onClose }) => {
+  const [errors, setErrors] = useState({});
   const handleChange = (key, value) => {
     setFormData((prevFormData) => ({ ...prevFormData, [key]: value }));
   };
@@ -36,21 +38,33 @@ export const FormPreview = ({ fields, formData, setFormData, onClose }) => {
               >
                 <span className="whitespace-nowrap w-25 font-medium inline-block">
                   {field.label}
+                  {field.required && (
+                    <span className="text-red-500 ml-1">*</span>
+                  )}
                 </span>
 
                 {field.type === "checkbox" && (
-                  <input
-                    type="checkbox"
-                    className="w-4 h-4"
-                    required={field.required}
-                    aria-label={field.ariaLabel}
-                    onChange={(e) => handleChange(field.id, e.target.checked)}
-                    checked={
-                    Object.keys(formData).length && field.id in formData
-                      ? formData[field.id]
-                      : false
-                    }
-                  />
+                  <>
+                    <input
+                      type="checkbox"
+                      className="w-4 h-4"
+                      required={field.required}
+                      aria-label={field.ariaLabel}
+                      onChange={(e) => handleChange(field.id, e.target.checked)}
+                      checked={
+                        Object.keys(formData).length && field.id in formData
+                          ? formData[field.id]
+                          : false
+                      }
+                      onBlur={(e) => {
+                        const error = validator(field, e.target.value);
+                        setErrors((prev) => ({ ...prev, [field.id]: error }));
+                      }}
+                    />
+                    {errors[field.id] && (
+                      <p className="text-sm text-red-500">{errors[field.id]}</p>
+                    )}
+                  </>
                 )}
 
                 {field.type === "radio" &&
@@ -78,11 +92,11 @@ export const FormPreview = ({ fields, formData, setFormData, onClose }) => {
                     </div>
                   ))}
 
-                {(field.type === "text" || field.type === "textarea") && (
+                {field.type === "text" && (
                   <div className="flex flex-1 flex-col">
                     <input
-                    key={index}
-                    id=""
+                      key={index}
+                      id=""
                       type={field.type}
                       placeholder={field.placeholder}
                       className="p-2 flex flex-1 border rounded focus:ring-2 focus:ring-blue-400 focus:outline-none"
@@ -91,21 +105,39 @@ export const FormPreview = ({ fields, formData, setFormData, onClose }) => {
                       maxLength={field.maxChar}
                       onBlur={(e) => {
                         const error = validator(field, e.target.value);
-                        if (error) alert(error);
+                        setErrors((prev) => ({ ...prev, [field.id]: error }));
                       }}
                       aria-label={field.ariaLabel}
                       value={formData[field.id] || ""}
                       onChange={(e) => handleChange(field.id, e.target.value)}
                     />
-                    {field.minChar && (
-                      <p className="text-xs text-red-400">
-                        Minimum characters allowed: {field.minChar}
-                      </p>
+                    {errors[field.id] && (
+                      <p className="text-sm text-red-500">{errors[field.id]}</p>
                     )}
-                    {field.maxChar && (
-                      <p className="text-xs text-red-400">
-                        Maximum characters allowed: {field.maxChar}
-                      </p>
+                  </div>
+                )}
+
+                {field.type === "textarea" && (
+                  <div className="flex flex-1 flex-col">
+                    <input
+                      key={index}
+                      id=""
+                      type={field.type}
+                      placeholder={field.placeholder}
+                      className="p-2 flex flex-1 border rounded focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                      required={field.required}
+                      minLength={field.minChar}
+                      maxLength={field.maxChar}
+                      onBlur={(e) => {
+                        const error = validator(field, e.target.value);
+                        setErrors((prev) => ({ ...prev, [field.id]: error }));
+                      }}
+                      aria-label={field.ariaLabel}
+                      value={formData[field.id] || ""}
+                      onChange={(e) => handleChange(field.id, e.target.value)}
+                    />
+                    {errors[field.id] && (
+                      <p className="text-sm text-red-500">{errors[field.id]}</p>
                     )}
                   </div>
                 )}
@@ -129,15 +161,24 @@ export const FormPreview = ({ fields, formData, setFormData, onClose }) => {
                 )}
 
                 {field.type === "date" && (
-                  <input
-                    id={field.id}
-                    type="date"
-                    className="p-2 flex flex-1 border rounded focus:ring-2 focus:ring-blue-400 focus:outline-none"
-                    required={field.required}
-                    aria-label={field.ariaLabel}
-                    value={formData[field.id] || ""}
-                    onChange={(e) => handleChange(field.id, e.target.value)}
-                  />
+                  <>
+                    <input
+                      id={field.id}
+                      type="date"
+                      className="p-2 flex flex-1 border rounded focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                      required={field.required}
+                      aria-label={field.ariaLabel}
+                      value={formData[field.id] || ""}
+                      onChange={(e) => handleChange(field.id, e.target.value)}
+                      onBlur={(e) => {
+                        const error = validator(field, e.target.value);
+                        setErrors((prev) => ({ ...prev, [field.id]: error }));
+                      }}
+                    />
+                    {errors[field.id] && (
+                      <p className="text-sm text-red-500">{errors[field.id]}</p>
+                    )}
+                  </>
                 )}
 
                 {field.type === "file" && (

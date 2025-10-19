@@ -13,7 +13,8 @@ const validator = (field, value) => {
         pattern = field.regex;
       } else if (typeof field.regex === "string") {
         // Regex string from config/JSON
-        pattern = new RegExp(field.regex);
+        const cleanedRegex = field.regex.replace(/^\/|\/$/g, ""); // remove / at start & end
+        pattern = new RegExp(cleanedRegex);
       }
       if (!pattern.test(value || "")) {
         return field.errorMsg || "Invalid format";
@@ -80,4 +81,3 @@ const evaluateCondition = (field, formData) => {
 };
 
 export { evaluateCondition, validator };
-
