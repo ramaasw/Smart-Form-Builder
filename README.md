@@ -29,6 +29,8 @@ Create powerful, production-ready React forms — visually and effortlessly! Our
 # Preview
 ✨ Drag fields ➜ Preview ➜ Export ➜ Done!
 
+![Image](https://github.com/user-attachments/assets/7d8762f8-2940-45ac-87ad-f778e611b853)
+
 # Installation
 Clone the repository:
 ```
