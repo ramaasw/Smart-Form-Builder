@@ -16,12 +16,12 @@ export default function SmartFormBuilder() {
   const [selectedFieldId, setSelectedFieldId] = useState(null);
   const [isPreviewMode, setIsPreviewMode] = useState(false);
   const [formData, setFormData] = useState([]);
-  // const [errors, setErrors] = useState();
 
 
   useEffect(() => {
     console.log("formData", formData);
-  }, [formData]);
+     console.log("fields", fields);
+  }, [formData,fields]);
 
   const handleDrop = (item) => {
         if (item.type === "radio" || item.type === "select") {

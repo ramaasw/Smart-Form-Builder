@@ -40,12 +40,14 @@ const validator = (field, value) => {
 
 const evaluateCondition = (field, formData) => {
   const logic = field.conditionalLogic;
-  if (!logic || !logic.dependsOn) return true;
+  if (!logic?.dependsOn) return true;
   const targetValue = formData[logic.dependsOn];
-  if (!targetValue) return true;
+  // If no value yet, hide the field by default
 
   const { operator, value, action } = logic;
-
+  if (targetValue === undefined || targetValue === "" || targetValue === null) {
+    return action !== "show";
+  }
   let comparison = false;
 
   switch (operator) {

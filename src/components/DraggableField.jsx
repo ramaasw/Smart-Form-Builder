@@ -1,6 +1,5 @@
 import { useRef } from "react";
 import { useDrag, useDrop } from "react-dnd";
-import { validator } from "../helper/helper";
 
 export const DraggableField = ({
   field,
@@ -50,7 +49,7 @@ export const DraggableField = ({
 
       {/* Different input types */}
       {field.type === "checkbox" && (
-        <input type="checkbox" className="w-4 h-4" required={field.required} />
+        <input type="checkbox" className="w-4 h-4" />
       )}
 
       {field.type === "radio" &&
@@ -64,7 +63,6 @@ export const DraggableField = ({
               type="radio"
               name={field.id}
               value={option}
-              required={field.required}
             />
           </div>
         ))}
@@ -74,21 +72,13 @@ export const DraggableField = ({
           type={field.type}
           placeholder={field.placeholder}
           className="p-2 flex flex-1 border rounded"
-          required={field.required}
           minLength={field.minChar}
           maxLength={field.maxChar}
-          onBlur={(e) => {
-            const error = validator(field, e.target.value);
-            if (error) alert(error);
-          }}
         />
       )}
 
       {field.type === "select" && (
-        <select
-          className="p-2 flex flex-1 border rounded"
-          required={field.required}
-        >
+        <select className="p-2 flex flex-1 border rounded">
           <option value="">Select an option</option>
           {field.options?.map((option, idx) => (
             <option key={`${field.id}-opt-${idx}`} value={option}>

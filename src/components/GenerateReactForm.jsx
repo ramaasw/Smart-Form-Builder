@@ -1,17 +1,15 @@
 function generateReactForm(fields) {
   const imports = `import React, { useState } from "react";`;
 
-  const initialState = fields
-    .map((f) => `"${f.label}": ""`)
-    .join(",\n  ");
+  const initialState = fields.map((f) => `"${f.label}": ""`).join(",\n  ");
 
   const validationLogic = fields
     .map((f) => {
       if (f.regex)
         return `
-    if (${f.required ? `!data["${f.label}"] ||` : ""} !new RegExp(${JSON.stringify(
-          f.regex
-        )}).test(data["${f.label}"])) {
+    if (${
+      f.required ? `!data["${f.label}"] ||` : ""
+    } !new RegExp(${JSON.stringify(f.regex)}).test(data["${f.label}"])) {
       newErrors["${f.label}"] = "${f.errorMsg || "Invalid input"}";
     }`;
       if (f.required)
@@ -23,19 +21,17 @@ function generateReactForm(fields) {
     })
     .join("");
 
-  
-
   const fieldElements = fields
     .map((f) => {
-      const condition = f.conditionalLogic?.dependsOn
-        ? `{
-        const c = ${JSON.stringify(f.conditionalLogic)};
-        const shouldShow =
-          (data[c.dependsOn] ${operatorToJS(
+      const dependsOnExists = f.conditionalLogic?.dependsOn;
+      const dependentFieldLabel =
+        dependsOnExists &&
+        fields.find((fld) => fld.id === f.conditionalLogic.dependsOn)?.label;
+      const condition = dependsOnExists
+        ? ` data["${dependentFieldLabel}"] ${operatorToJS(
             f.conditionalLogic.operator
-          )} c.value);
-        if (c.action === "hide" ? shouldShow : !shouldShow) return null;
-      }`
+          )} "${f.conditionalLogic.value}" 
+      `
         : "";
 
       let element = "";
@@ -48,13 +44,17 @@ function generateReactForm(fields) {
             type="${f.type}"
             placeholder="${f.placeholder || ""}"
             value={data["${f.label}"]}
-            onChange={(e) => setData({ ...data, ["${f.label}"]: e.target.value })}
+            onChange={(e) => setData({ ...data, ["${
+              f.label
+            }"]: e.target.value })}
           />`;
           break;
         case "select":
           element = `<select
             value={data["${f.label}"]}
-            onChange={(e) => setData({ ...data, ["${f.label}"]: e.target.value })}
+            onChange={(e) => setData({ ...data, ["${
+              f.label
+            }"]: e.target.value })}
           >
             <option value="">Select</option>
             ${f.options
@@ -84,12 +84,14 @@ function generateReactForm(fields) {
       }
 
       return `
-      ${condition}
+       ${condition ? `{ ${condition} &&` : ""} 
       <div>
         <label>${f.label || f.type}</label>
         ${element}
-        {errors["${f.label}"] && <small style={{ color: "red" }}>{errors["${f.label}"]}</small>}
-      </div>`;
+        {errors["${f.label}"] && <small style={{ color: "red" }}>{errors["${
+        f.label
+      }"]}</small>}
+      </div>${condition ? " }" : ""}`;
     })
     .join("\n");
 
@@ -136,3 +138,4 @@ function operatorToJS(op) {
   }
 }
 export { generateReactForm };
+
