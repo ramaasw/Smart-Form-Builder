@@ -1,71 +1,69 @@
 function generateReactForm(fields) {
   const imports = `import React, { useState } from "react";`;
 
-  const initialState = fields.map((f) => `"${f.label}": ""`).join(",\n  ");
+  const initialState = fields.map(f => `"${f.label}": ""`).join(",\n  ");
 
-  const validationLogic = fields
-    .map((f) => {
-      if (f.regex)
-        return `
-    if (${
-      f.required ? `!data["${f.label}"] ||` : ""
-    } !new RegExp(${JSON.stringify(f.regex)}).test(data["${f.label}"])) {
+  // Validation logic
+  const validationLogic = fields.map(f => {
+    if (f.regex) {
+      return `
+    if (${f.required ? `!data["${f.label}"] ||` : ""} 
+        !new RegExp(${JSON.stringify(f.regex)}).test(data["${f.label}"])) {
       newErrors["${f.label}"] = "${f.errorMsg || "Invalid input"}";
     }`;
-      if (f.required)
-        return `
+    }
+    if (f.required) {
+      return `
     if (!data["${f.label}"]) {
-      newErrors["${f.label}"] = "${f.label || f.type} is required";
+      newErrors["${f.label}"] = "${f.label} is required";
     }`;
-      return "";
-    })
-    .join("");
+    }
+    return "";
+  }).join("");
 
-  const fieldElements = fields
-    .map((f) => {
-      const dependsOnExists = f.conditionalLogic?.dependsOn;
-      const dependentFieldLabel =
-        dependsOnExists &&
-        fields.find((fld) => fld.id === f.conditionalLogic.dependsOn)?.label;
-      const condition = dependsOnExists
-        ? ` data["${dependentFieldLabel}"] ${operatorToJS(
-            f.conditionalLogic.operator
-          )} "${f.conditionalLogic.value}" 
-      `
-        : "";
+  // Field elements
+  const fieldElements = fields.map(f => {
+    const dependsOnExists = f.conditionalLogic?.dependsOn;
+    const dependentFieldLabel =
+      dependsOnExists &&
+      fields.find(fld => fld.id === f.conditionalLogic.dependsOn)?.label;
 
-      let element = "";
-      switch (f.type) {
-        case "text":
-        case "textarea":
-        case "date":
-        case "file":
-          element = `<input
-            type="${f.type}"
-            placeholder="${f.placeholder || ""}"
-            value={data["${f.label}"]}
-            onChange={(e) => setData({ ...data, ["${
-              f.label
-            }"]: e.target.value })}
-          />`;
-          break;
-        case "select":
-          element = `<select
-            value={data["${f.label}"]}
-            onChange={(e) => setData({ ...data, ["${
-              f.label
-            }"]: e.target.value })}
-          >
-            <option value="">Select</option>
-            ${f.options
-              ?.map((opt) => `<option value="${opt}">${opt}</option>`)
-              .join("\n")}
-          </select>`;
-          break;
-        case "radio":
-          element = `${f.options
-            ?.map(
-              (opt) => `
+    const condition = dependsOnExists
+      ? `data["${dependentFieldLabel}"] ${operatorToJS(f.conditionalLogic.operator)} "${f.conditionalLogic.value}"`
+      : "";
+
+    const id = f.label.replace(/\s+/g, "_").toLowerCase();
+
+    let element = "";
+    switch (f.type) {
+      case "text":
+      case "date":
+      case "file":
+      case "textarea":
+        element = `<input
+          id="${id}"
+          type="${f.type}"
+          placeholder="${f.placeholder || ""}"
+          value={data["${f.label}"]}
+          onChange={(e) => setData({ ...data, ["${f.label}"]: e.target.value })}
+        />`;
+        break;
+
+      case "select":
+        element = `<select
+          id="${id}"
+          value={data["${f.label}"]}
+          onChange={(e) => setData({ ...data, ["${f.label}"]: e.target.value })}
+        >
+          <option value="">Select</option>
+          ${f.options?.map(opt => `<option value="${opt}">${opt}</option>`).join("\n")}
+        </select>`;
+        break;
+
+      case "radio":
+        element = `${f.options
+          ?.map(
+            opt => `
           <label>
             <input
               type="radio"
@@ -76,24 +74,25 @@ function generateReactForm(fields) {
             />
             ${opt}
           </label>`
-            )
-            .join("\n")}`;
-          break;
-        default:
-          element = `<input type="text" />`;
-      }
+          )
+          .join("\n")}`;
+        break;
 
-      return `
-       ${condition ? `{ ${condition} &&` : ""} 
-      <div>
-        <label>${f.label || f.type}</label>
+      default:
+        element = `<input id="${id}" type="text" />`;
+    }
+
+    return `
+      ${condition ? `{${condition} && (` : ""}
+      <div className="form-group">
+        <label htmlFor="${id}">${f.label}</label>
         ${element}
-        {errors["${f.label}"] && <small style={{ color: "red" }}>{errors["${
-        f.label
-      }"]}</small>}
-      </div>${condition ? " }" : ""}`;
-    })
-    .join("\n");
+        {errors["${f.label}"] && (
+          <small style={{ color: "red" }}>{errors["${f.label}"]}</small>
+        )}
+      </div>
+      ${condition ? ") }" : ""}`;
+  }).join("\n");
 
   return `${imports}
 
@@ -132,10 +131,10 @@ function operatorToJS(op) {
     case "lessThan":
       return "<";
     case "contains":
-      return ".includes";
+      return "?.includes";
     default:
       return "===";
   }
 }
-export { generateReactForm };
 
+export { generateReactForm };

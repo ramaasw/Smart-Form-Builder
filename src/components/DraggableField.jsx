@@ -1,5 +1,6 @@
 import { useRef } from "react";
 import { useDrag, useDrop } from "react-dnd";
+import DynamicInputRenderer from "../helper/RenderFieldInput.js/DynamicInputRenderer";
 
 export const DraggableField = ({
   field,
@@ -10,7 +11,7 @@ export const DraggableField = ({
 }) => {
   const ref = useRef(null);
 
-  // Make it draggable
+  // --- Make it draggable ---
   const [{ isDragging }, dragRef] = useDrag({
     type: "form-field",
     item: { id: field.id, index },
@@ -19,7 +20,7 @@ export const DraggableField = ({
     }),
   });
 
-  // Make it a drop target for reordering
+  // --- Make it droppable for reordering ---
   const [, dropRef] = useDrop({
     accept: "form-field",
     hover: (item) => {
@@ -27,12 +28,13 @@ export const DraggableField = ({
       const hoverIndex = index;
       if (dragIndex === hoverIndex) return;
       moveField(dragIndex, hoverIndex);
-      item.index = hoverIndex; //  Update the index in the dragged item
+      item.index = hoverIndex;
     },
   });
 
   dragRef(dropRef(ref)); // connect both drag & drop
 
+  // --- Render UI ---
   return (
     <div
       ref={ref}
@@ -42,59 +44,26 @@ export const DraggableField = ({
       onClick={onClick}
       style={{ opacity: isDragging ? 0.5 : 1 }}
     >
-      {/* label */}
-      <span className="whitespace-nowrap w-25 font-medium inline-block">
+      {/* Label */}
+      <label
+        htmlFor={field.id}
+        className="font-medium text-gray-800 text-sm whitespace-nowrap"
+      >
         {field.label}
-      </span>
+      </label>
 
-      {/* Different input types */}
-      {field.type === "checkbox" && (
-        <input type="checkbox" className="w-4 h-4" />
-      )}
-
-      {field.type === "radio" &&
-        field.options.map((option) => (
-          <div
-            key={`${field.id}-${option}`}
-            className="flex items-center gap-2"
-          >
-            <label>{option}</label>
-            <input
-              type="radio"
-              name={field.id}
-              value={option}
-            />
-          </div>
-        ))}
-
-      {(field.type === "text" || field.type === "textarea") && (
-        <input
-          type={field.type}
-          placeholder={field.placeholder}
-          className="p-2 flex flex-1 border rounded"
-          minLength={field.minChar}
-          maxLength={field.maxChar}
-        />
-      )}
-
-      {field.type === "select" && (
-        <select className="p-2 flex flex-1 border rounded">
-          <option value="">Select an option</option>
-          {field.options?.map((option, idx) => (
-            <option key={`${field.id}-opt-${idx}`} value={option}>
-              {option}
-            </option>
-          ))}
-        </select>
-      )}
-
-      {field.type === "date" && (
-        <input type="date" className="p-2 flex flex-1 border rounded" />
-      )}
-
-      {field.type === "file" && (
-        <input type="file" className="p-2 flex flex-1 border rounded" />
-      )}
+      {/* Dynamic input */}
+      <DynamicInputRenderer
+        field={field}
+        value={field.value || ""}
+        onChange={(e) => {
+          const val =
+            e?.target?.type === "checkbox"
+              ? e.target.checked
+              : e?.target?.value ?? e;
+          field.value = val; // You can also lift this up via props if needed
+        }}
+      />
     </div>
   );
 };
