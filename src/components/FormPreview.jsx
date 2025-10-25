@@ -36,7 +36,7 @@ export const FormPreview = ({ fields, formData, setFormData, onClose }) => {
                 key={field.id}
                 className="w-full mb-4 p-2 flex items-center gap-2"
               >
-                <span className="whitespace-nowrap w-25 font-medium inline-block">
+                <span className="whitespace-nowrap w-25 font-medium inline-block text-left">
                   {field.label}
                   {field.required && (
                     <span className="text-red-500 ml-1">*</span>

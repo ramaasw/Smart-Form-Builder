@@ -1,8 +1,8 @@
-import { useRef } from "react";
+import { useRef , React, memo} from "react";
 import { useDrag, useDrop } from "react-dnd";
 import DynamicInputRenderer from "../helper/RenderFieldInput.js/DynamicInputRenderer";
 
-export const DraggableField = ({
+export const DraggableField = memo(({
   field,
   index,
   moveField,
@@ -47,7 +47,7 @@ export const DraggableField = ({
       {/* Label */}
       <label
         htmlFor={field.id}
-        className="font-medium text-gray-800 text-sm whitespace-nowrap"
+        className="font-medium text-gray-800 text-sm shrink-0 text-left !min-w-20"
       >
         {field.label}
       </label>
@@ -66,4 +66,4 @@ export const DraggableField = ({
       />
     </div>
   );
-};
+});
