@@ -32,7 +32,7 @@ export const DropFields = React.memo(
       link.click();
       // Download formConfig as file
       const fieldsStr = fields
-        .map((f) => `${JSON.stringify(f).replace(/"(\w+)"\s*:/g, "$1:")}`)
+        .map((f) => `${JSON.stringify(f,null,2).replace(/"(\w+)"\s*:/g, "$1:")}`)
         .join(",\n  ");
 
       const formConfig = new Blob(
